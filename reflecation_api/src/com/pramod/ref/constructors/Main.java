@@ -14,20 +14,20 @@ public class Main {
 		// printConstructors(Address.class);
 
 		// will create and instance of Person class constructor with arguments
-//		Address address = (Address) createInstanceWithArgument(Address.class, "Banglore", 1);
-//		System.out.println(address);
+		Address address = createInstanceWithArgument(Address.class, "Banglore", 1);
+		System.out.println(address);
 
 //		// will create and instance of Person class constructor with no arguments
 //		Person person = (Person) createInstanceWithArgument(Person.class);
 //		System.out.println(person);
 
 		// will create and instance of Person class constructor with arguments
-		Person person = (Person) createInstanceWithArgument(Person.class, "Banglore", 1);
+		Person person = createInstanceWithArgument(Person.class, address,"Banglore", 1);
 		System.out.println(person);
 	}
 
 	// helps to find the constructor of the class.
-	static void printConstructors(Class<?> inputClass) {
+	static <T> void printConstructors(Class<T> inputClass) {
 		// declared Constructors will get you all the constructors declared in the
 		// class.
 		Constructor<?>[] declaredConstructors = inputClass.getDeclaredConstructors();
@@ -44,12 +44,12 @@ public class Main {
 	}
 
 	// used to find the constructor of the class and create and object of it.
-	static Object createInstanceWithArgument(Class<?> inputClass, Object... args)
+	static <T> T createInstanceWithArgument(Class<T> inputClass, Object... args)
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Constructor<?> constructor : inputClass.getDeclaredConstructors()) {
 			if (constructor.getParameterCount() == args.length) {
 				// is used to invoke to create and object using the parameters
-				return constructor.newInstance(args);
+				return (T)constructor.newInstance(args);
 			}
 		}
 		System.out.println("An appropriate constructon wasnot found::");
