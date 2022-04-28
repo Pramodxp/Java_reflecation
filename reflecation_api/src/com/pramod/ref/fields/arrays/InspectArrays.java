@@ -12,7 +12,11 @@ public class InspectArrays {
 		inspectArrayValues(twoDimentionalArray);
 	}
 
+	/**
+	 * @param arrayObject
+	 */
 	public static void inspectArrayValues(Object arrayObject) {
+		
 		int length = Array.getLength(arrayObject);
 
 		System.out.print("[");

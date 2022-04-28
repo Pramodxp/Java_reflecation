@@ -44,6 +44,7 @@ public class Main {
 	}
 
 	// used to find the constructor of the class and create and object of it.
+	@SuppressWarnings("unchecked")
 	static <T> T createInstanceWithArgument(Class<T> inputClass, Object... args)
 			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Constructor<?> constructor : inputClass.getDeclaredConstructors()) {

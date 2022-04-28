@@ -1,5 +1,6 @@
 package com.pramod.ref.fields.json_writer;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 import com.pramod.ref.fields.json_writer.data.Address;
@@ -36,9 +37,11 @@ public class Main {
 			builder.append(formatStringValue(field.getName()));
 			builder.append(":");
 			if (field.getType().isPrimitive()) {
-				builder.append(formatPrimitiveValues(field, instance));
+				builder.append(formatPrimitiveValues(field.get(instance), field.getType()));
 			} else if (field.getType().equals(String.class)) {
 				builder.append(formatStringValue(field.get(instance).toString()));
+			} else if (field.getType().equals(Array.class)) {
+				builder.append(arrayToJson(field.get(instance),1));
 			} else {
 				builder.append(objectToJson(field.get(instance), indentSize + 1));
 			}
@@ -56,16 +59,16 @@ public class Main {
 	}
 
 	// helper methods
-	private static String formatPrimitiveValues(Field field, Object parentInstance)
+	private static String formatPrimitiveValues(Object parentInstance, Class<?> type)
 			throws IllegalArgumentException, IllegalAccessException {
-		if (field.getType().equals(boolean.class) || field.getType().equals(int.class)
-				|| field.getType().equals(long.class) || field.getType().equals(short.class)) {
-			return field.get(parentInstance).toString();
-		} else if (field.getType().equals(double.class) || field.getType().equals(float.class)) {
-			return String.format("%.02f", field.get(parentInstance));
+		if (type.equals(boolean.class) || type.equals(int.class) || type.equals(long.class)
+				|| type.equals(short.class)) {
+			return parentInstance.toString();
+		} else if (type.equals(double.class) || type.equals(float.class)) {
+			return String.format("%.02f", parentInstance);
 		}
 
-		throw new RuntimeException(String.format("Type : %s is unsupported", field.getType().getName()));
+		throw new RuntimeException(String.format("Type : %s is unsupported", type.getName()));
 	}
 
 	public static String formatStringValue(String value) {
@@ -78,5 +81,32 @@ public class Main {
 			stringBuilder.append("\t");
 		}
 		return stringBuilder.toString();
+	}
+
+	private static String arrayToJson(Object arrayInstance, int indentSize) throws IllegalArgumentException, IllegalAccessException {
+		StringBuilder builder = new StringBuilder();
+		int arrayLength = Array.getLength(arrayInstance);
+
+		Class<?> componentType = arrayInstance.getClass().getComponentType();
+		builder.append("[");
+		builder.append("\n");
+
+		for (int i = 0; i < arrayLength; i++) {
+			Object element = Array.get(arrayInstance, i);
+			if (componentType.isPrimitive()) {
+				builder.append(indent(indentSize+1));
+				builder.append(formatPrimitiveValues(arrayInstance, componentType));
+			} else if (componentType.getClass().equals(String.class)) {
+				builder.append(indent(indentSize + 1));
+				builder.append(formatStringValue(element.toString()));
+			}
+
+			if (i != arrayLength - 1) {
+				builder.append(",");
+			}
+			builder.append("\n");
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

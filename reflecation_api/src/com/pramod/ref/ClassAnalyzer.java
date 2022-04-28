@@ -2,7 +2,6 @@ package com.pramod.ref;
 
 import java.util.Arrays;
 import java.util.List;
-
 public class ClassAnalyzer {
 	private static final List<String> JDK_PACKAGE_PREFIXES = Arrays.asList("com.sun.", "java", "javax", "jdk",
 			"org.w3c", "org.xml");
